@@ -1,0 +1,24 @@
+# Build directories
+build/
+build_*/
+
+# Credentials and certificates (NEVER commit these!)
+certificates/
+src/certs_credentials.h
+*.pem
+*.key
+*.crt
+*.der
+
+# IDE files
+.vscode/
+.idea/
+
+# Zephyr generated
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.a
+*.d

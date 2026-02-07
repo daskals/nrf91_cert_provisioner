@@ -1,0 +1,18 @@
+#
+# nRF91 Certificate Provisioner
+#
+
+menu "Certificate Provisioner Settings"
+
+config MQTT_HELPER_SEC_TAG
+	int "Security tag for AWS IoT certificates"
+	default 16
+	help
+	  The security tag used to store CA cert, device cert,
+	  and private key in the modem secure storage.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
