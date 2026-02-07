@@ -43,7 +43,9 @@ static void print_modem_info(void)
 		if (end) {
 			*end = '\0';
 		}
-		printk("Hardware:       %s\n", buf);
+		/* Skip "%HWVERSION: " prefix if present */
+		char *hw = strstr(buf, ": ");
+		printk("Hardware:       %s\n", hw ? hw + 2 : buf);
 	}
 
 	/* IMEI */
