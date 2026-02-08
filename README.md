@@ -1,98 +1,54 @@
 # nRF91 Certificate Provisioner
 
-Standalone tool for writing AWS IoT certificates to the nRF9151 modem secure storage. Flash this once per device before running your main application.
+A simple utility to provision AWS IoT certificates (Root CA, device certificate, and private key) into the nRF9151 modem's secure storage. Run this once per device before deploying your main application. Certificates are stored using the modem's secure key management and persist across firmware updates.
 
 ## Supported Boards
 
 - `nrf9151dk/nrf9151/ns` (nRF9151 DK)
 - `conexio_stratus_pro/nrf9151/ns` (Conexio Stratus Pro)
-- Any nRF91-based board with modem firmware
+- Any nRF91-series board with modem firmware
 
-## Quick Start
+## Usage
 
-### 1. Download your AWS IoT certificates
+### 1. Download AWS IoT Certificates
 
-From the AWS IoT Console, download the three files when creating a Thing:
-- **Root CA certificate** (e.g., `AmazonRootCA1.pem`)
-- **Device certificate** (e.g., `xxxxx-certificate.pem.crt`)
-- **Private key** (e.g., `xxxxx-private.pem.key`)
+From the AWS IoT Console, download these three files:
+- **Root CA certificate** (`AmazonRootCA1.pem`)
+- **Device certificate** (`xxxxx-certificate.pem.crt`)
+- **Private key** (`xxxxx-private.pem.key`)
 
-### 2. Place certificates in the `certificates/` folder
+### 2. Place in `certificates/` Folder
 
 ```
 nrf91_cert_provisioner/
 ├── certificates/
-│   ├── AmazonRootCA1.pem                          <- CA certificate
-│   ├── e47f26bb...-certificate.pem.crt             <- Device certificate
-│   └── e47f26bb...-private.pem.key                 <- Private key
-├── src/
-├── CMakeLists.txt
-├── prj.conf
-└── ...
+│   ├── AmazonRootCA1.pem           <- Root CA
+│   ├── xxx-certificate.pem.crt     <- Device cert
+│   └── xxx-private.pem.key         <- Private key
 ```
 
-The build system auto-detects files by name pattern:
+The build system auto-detects files by pattern:
 
-| Certificate Type | File Pattern |
+| Type | Pattern |
 |---|---|
 | CA certificate | `*CA*.pem` or `*root*.pem` |
-| Device certificate | `*certificate*.crt` or `*certificate*.pem` |
-| Private key | `*private*.key` or `*private*.pem` |
+| Device certificate | `*certificate*.crt` or `*.pem` |
+| Private key | `*private*.key` or `*.pem` |
 
-### 3. Build and flash
+### 3. Expected Output
 
-**nRF9151 DK:**
-```bash
-west build --board nrf9151dk/nrf9151/ns
-west flash
-```
-
-**Conexio Stratus Pro:**
-```bash
-west build --board conexio_stratus_pro/nrf9151/ns -- -DBOARD_ROOT=c:/ncs/v2.9.0/conexio-firmware-sdk
-west flash
-```
-
-### 4. Check the output
-
-Connect a serial terminal (115200 baud) and you should see:
+After flashing, connect a serial terminal (115200 baud):
 
 ```
-Starting nRF91 Certificate Provisioner...
-
-========================================
-  nRF91 Certificate Provisioner
-========================================
-
-Modem firmware: mfw_nrf91x1_2.0.2
-Hardware:       nRF9151 LACA A1
-IMEI:           352656100012345
-
 ── Certificate Provisioning (sec_tag 16) ──
   CA cert: Provisioned OK
   Device cert: Provisioned OK
   Private key: Provisioned OK
 
 All certificates provisioned successfully!
-You can now flash the main gateway application.
-
-========================================
-  Done. Device is ready.
-========================================
 ```
 
-If certificates were already provisioned and match, you'll see:
-```
-  CA cert: Already provisioned (match)
-  Device cert: Already provisioned (match)
-  Private key: Mismatch, updating...
-  Private key: Provisioned OK
-```
-> Note: Private key always shows "Mismatch" because the modem does not allow reading back private keys for comparison. This is normal and secure.
-
-### 5. Flash your main application
-
-Once provisioning is complete, flash your main application (e.g., the gateway firmware). The certificates persist in the modem's secure storage across firmware updates.
+> **Note:** The private key may show "Mismatch, updating..." even if unchanged. This is normal — the modem doesn't allow reading back private keys for security.
 
 ## Build-Time Validation
 

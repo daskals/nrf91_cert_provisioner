@@ -2,13 +2,24 @@
 build/
 build_*/
 
-# Credentials and certificates (NEVER commit these!)
-certificates/
+# Credentials and certificates (NEVER commit real certs!)
+# Ignore all certificate files
+certificates/*.pem
+certificates/*.key
+certificates/*.crt
+certificates/*.der
+
+# But allow example/template files
+!certificates/*.example.pem
+!certificates/*.example.key
+!certificates/*.example.crt
+
+# Keep certificates folder structure
+!certificates/.gitkeep
+!certificates/README.md
+
+# Ignore generated credentials header
 src/certs_credentials.h
-*.pem
-*.key
-*.crt
-*.der
 
 # IDE files
 .vscode/
